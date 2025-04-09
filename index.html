@@ -31,6 +31,14 @@
       border: 1px solid #ddd;
       background: #f9f9f9;
     }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .result-key { font-weight: bold; color: #333; }
+    .result-value { text-align: right; color: #222; }
   </style>
 </head>
 <body>
@@ -122,7 +130,13 @@
       fetch(url)
         .then(res => res.json())
         .then(json => {
-          resultBox.innerHTML = JSON.stringify(json, null, 2);
+          const keys = json.header;
+          const values = json.data;
+          let html = '';
+          for (let i = 0; i < keys.length; i++) {
+            html += `<div class="result-row"><div class="result-key">${keys[i]}</div><div class="result-value">${values[i]}</div></div>`;
+          }
+          resultBox.innerHTML = html;
         })
         .catch(err => {
           resultBox.innerHTML = '<span style="color: red">Gagal mengambil data ongkir.</span>';
