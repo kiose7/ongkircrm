@@ -107,22 +107,44 @@
         .then(res => res.json())
         .then(json => {
           resultBox.innerHTML = '';
-          for (const [key, value] of Object.entries(json)) {
+
+          const keys = Object.keys(json);
+          const values = Object.values(json);
+
+          // Skip ADM dan KEC, mulai dari index ke-2 sampai sebelum Estimasi
+          for (let i = 2; i < keys.length - 1; i++) {
             const row = document.createElement('div');
             row.className = 'result-row';
 
             const keyDiv = document.createElement('div');
             keyDiv.className = 'result-key';
-            keyDiv.textContent = key;
+            keyDiv.textContent = keys[i];
 
             const valueDiv = document.createElement('div');
             valueDiv.className = 'result-value';
-            valueDiv.textContent = value;
+            const valueText = isNaN(values[i]) ? values[i] : parseInt(values[i]).toLocaleString('id-ID');
+            valueDiv.textContent = valueText;
 
             row.appendChild(keyDiv);
             row.appendChild(valueDiv);
             resultBox.appendChild(row);
           }
+
+          // Tambahkan estimasi
+          const estRow = document.createElement('div');
+          estRow.className = 'result-row';
+
+          const estKey = document.createElement('div');
+          estKey.className = 'result-key';
+          estKey.textContent = keys[keys.length - 1];
+
+          const estVal = document.createElement('div');
+          estVal.className = 'result-value';
+          estVal.textContent = values[values.length - 1];
+
+          estRow.appendChild(estKey);
+          estRow.appendChild(estVal);
+          resultBox.appendChild(estRow);
         })
         .catch(err => {
           resultBox.innerHTML = '<span style="color: red">Gagal mengambil data ongkir.</span>';
