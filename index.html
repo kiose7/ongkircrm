@@ -1,10 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Cek Ongkir</title>
+  <meta charset="UTF-8">
+  <title>Cek Ongkir CRM</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    #hasil {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <h1>Cek Ongkir CRM</h1>
-  <p>Halaman ini akan menampilkan data ongkir dari Google Sheet.</p>
+
+  <label for="provinsi">Provinsi:</label><br>
+  <input type="text" id="provinsi" placeholder="Contoh: Jawa Barat"><br>
+
+  <label for="index">Index:</label><br>
+  <input type="number" id="index" placeholder="Contoh: 0"><br>
+
+  <button onclick="cekOngkir()">Cek Ongkir</button>
+
+  <p id="hasil">Silakan isi data di atas dan klik tombol.</p>
+
+  <script>
+    function cekOngkir() {
+      const provinsi = document.getElementById('provinsi').value.trim();
+      const index = document.getElementById('index').value;
+
+      if (!provinsi || index === "") {
+        document.getElementById('hasil').innerText = "Mohon isi provinsi dan index.";
+        return;
+      }
+
+      const url = `https://script.google.com/macros/s/AKfycby3xAhYR-NrT9NR6N56O1ZUIUhLb4V1ufxemPSZ15n2EquTDrhdXnekYXhI5UG7ZhqoVw/exec?provinsi=${encodeURIComponent(provinsi)}&index=${index}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('hasil').innerText = "❌ " + data.error;
+          } else {
+            document.getElementById('hasil').innerText = `✅ Ongkir: Rp${data.ongkir}`;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('hasil').innerText = "Terjadi kesalahan saat mengambil data.";
+        });
+    }
+  </script>
 </body>
 </html>
