@@ -6,6 +6,9 @@
   <style>
     body { font-family: Arial; padding: 20px; }
     input[type="text"] { width: 100%; padding: 10px; font-size: 16px; }
+    .autocomplete-wrapper {
+      position: relative;
+    }
     ul.suggestions {
       list-style: none;
       margin: 0;
@@ -49,8 +52,10 @@
 </head>
 <body>
   <h2>Tujuan</h2>
-  <input type="text" id="tujuanInput" placeholder="Ketik tujuan (provinsi, kabupaten, kecamatan)...">
-  <ul class="suggestions" id="suggestions" hidden></ul>
+  <div class="autocomplete-wrapper">
+    <input type="text" id="tujuanInput" placeholder="Ketik tujuan (provinsi, kabupaten, kecamatan)...">
+    <ul class="suggestions" id="suggestions" hidden></ul>
+  </div>
   <div id="resultBox"></div>
 
   <script>
@@ -105,4 +110,56 @@
       suggestionBox.hidden = true;
       resultBox.innerHTML = '<em>Memuat data ongkir...</em>';
 
-      const url = `https://script.google.com/macros/s/AKfycby3xAhYR-NrT9NR6N56O1ZUIUhLb4V1ufxemPSZ15n2EquTD
+      const url = `https://script.google.com/macros/s/AKfycby3xAhYR-NrT9NR6N56O1ZUIUhLb4V1ufxemPSZ15n2EquTDrhdXnekYXhI5UG7ZhqoVw/exec?provinsi=${encodeURIComponent(item.provinsi)}&index=${item.index}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(json => {
+          resultBox.innerHTML = '';
+
+          const headers = [
+            "ADM", "KEC", "POS Reg", "Wahana Xpress", "Wahana Kargo", "SAP Xpress", "SAP Kargo", "Lion Reg", "Lion JagoPack",
+            "Lion BigPack", "JNT", "JNE", "JNE JTR", "ID Xpress", "ID Trucking", "SiCepat Reg", "SiCepat Gokil", "NCS Reg", "Estimasi"
+          ];
+
+          for (let i = 2; i < headers.length - 1; i++) {
+            const row = document.createElement('div');
+            row.className = 'result-row';
+
+            const keyDiv = document.createElement('div');
+            keyDiv.className = 'result-key';
+            keyDiv.textContent = headers[i];
+
+            const valueDiv = document.createElement('div');
+            valueDiv.className = 'result-value';
+            const valueText = isNaN(json[i]) ? json[i] : parseInt(json[i]).toLocaleString('id-ID');
+            valueDiv.textContent = valueText;
+
+            row.appendChild(keyDiv);
+            row.appendChild(valueDiv);
+            resultBox.appendChild(row);
+          }
+
+          const estRow = document.createElement('div');
+          estRow.className = 'result-row';
+
+          const estKey = document.createElement('div');
+          estKey.className = 'result-key';
+          estKey.textContent = headers[headers.length - 1];
+
+          const estVal = document.createElement('div');
+          estVal.className = 'result-value';
+          estVal.textContent = json[json.length - 1];
+
+          estRow.appendChild(estKey);
+          estRow.appendChild(estVal);
+          resultBox.appendChild(estRow);
+        })
+        .catch(err => {
+          resultBox.innerHTML = '<span style="color: red">Gagal mengambil data ongkir.</span>';
+          console.error(err);
+        });
+    }
+  </script>
+</body>
+</html>
