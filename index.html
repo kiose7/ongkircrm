@@ -31,29 +31,6 @@
       border: 1px solid #ddd;
       background: #f9f9f9;
     }
-    .result-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .result-key {
-      font-weight: bold;
-      color: #333;
-      flex: 1;
-      min-width: 40%;
-    }
-    .result-value {
-      color: #111;
-      font-family: monospace;
-      text-align: right;
-      flex: 1;
-      min-width: 50%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   </style>
 </head>
 <body>
@@ -91,7 +68,7 @@
 
     input.addEventListener('input', () => {
       const val = input.value.toLowerCase();
-      const filtered = data.filter(d => d.label.toLowerCase().includes(val)).slice(0, 50);
+      const filtered = data.filter(d => d.label.toLowerCase().includes(val));
       renderSuggestions(filtered);
       selectedIndex = -1;
     });
@@ -145,45 +122,7 @@
       fetch(url)
         .then(res => res.json())
         .then(json => {
-          resultBox.innerHTML = '';
-
-          const headers = [
-            "ADM", "KEC", "POS Reg", "Wahana Xpress", "Wahana Kargo", "SAP Xpress", "SAP Kargo", "Lion Reg", "Lion JagoPack",
-            "Lion BigPack", "JNT", "JNE", "JNE JTR", "ID Xpress", "ID Trucking", "SiCepat Reg", "SiCepat Gokil", "NCS Reg", "Estimasi"
-          ];
-
-          for (let i = 2; i < headers.length - 1; i++) {
-            const row = document.createElement('div');
-            row.className = 'result-row';
-
-            const keyDiv = document.createElement('div');
-            keyDiv.className = 'result-key';
-            keyDiv.textContent = headers[i];
-
-            const valueDiv = document.createElement('div');
-            valueDiv.className = 'result-value';
-            const valueText = isNaN(json[i]) ? json[i] : parseInt(json[i]).toLocaleString('id-ID');
-            valueDiv.textContent = valueText;
-
-            row.appendChild(keyDiv);
-            row.appendChild(valueDiv);
-            resultBox.appendChild(row);
-          }
-
-          const estRow = document.createElement('div');
-          estRow.className = 'result-row';
-
-          const estKey = document.createElement('div');
-          estKey.className = 'result-key';
-          estKey.textContent = headers[headers.length - 1];
-
-          const estVal = document.createElement('div');
-          estVal.className = 'result-value';
-          estVal.textContent = json[json.length - 1];
-
-          estRow.appendChild(estKey);
-          estRow.appendChild(estVal);
-          resultBox.appendChild(estRow);
+          resultBox.innerHTML = JSON.stringify(json, null, 2);
         })
         .catch(err => {
           resultBox.innerHTML = '<span style="color: red">Gagal mengambil data ongkir.</span>';
