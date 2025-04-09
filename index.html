@@ -91,7 +91,7 @@
 
     input.addEventListener('input', () => {
       const val = input.value.toLowerCase();
-      const filtered = data.filter(d => d.label.toLowerCase().includes(val));
+      const filtered = data.filter(d => d.label.toLowerCase().includes(val)).slice(0, 50);
       renderSuggestions(filtered);
       selectedIndex = -1;
     });
