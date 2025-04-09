@@ -25,25 +25,42 @@
     ul.suggestions li:hover {
       background: #f0f0f0;
     }
+    #resultBox {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      background: #f9f9f9;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
   <h2>Cek Ongkir Tujuan</h2>
   <input type="text" id="tujuanInput" placeholder="Ketik tujuan (provinsi, kabupaten, kecamatan)...">
   <ul class="suggestions" id="suggestions" hidden></ul>
+  <div id="resultBox"></div>
 
   <script>
-    const data = [
-      { label: "Aceh - Kab. Aceh Barat - Johan Pahlawan", provinsi: "Aceh", index: "1" },
-      { label: "Aceh - Kab. Aceh Barat - Samatiga", provinsi: "Aceh", index: "2" },
-      { label: "Aceh - Kab. Aceh Barat - Bubon", provinsi: "Aceh", index: "3" },
-      { label: "Aceh - Kab. Aceh Barat - Arongan Lambalek", provinsi: "Aceh", index: "4" },
-      { label: "Aceh - Kab. Aceh Barat - Woyla", provinsi: "Aceh", index: "5" }
-      // tambahkan semua data lain dari autodata.lst ke sini
-    ];
-
     const input = document.getElementById('tujuanInput');
     const suggestionBox = document.getElementById('suggestions');
+    const resultBox = document.getElementById('resultBox');
+    let data = [];
+
+    fetch('https://raw.githubusercontent.com/kiose7/ongkircrm/main/autodata.lst')
+      .then(res => res.text())
+      .then(text => {
+        data = text.split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+          .map(line => {
+            const [index, provinsi, kabupaten, kecamatan] = line.split(',');
+            return {
+              label: `${provinsi} - ${kabupaten} - ${kecamatan}`,
+              provinsi,
+              index
+            };
+          });
+      });
 
     input.addEventListener('input', () => {
       const val = input.value.toLowerCase();
@@ -69,8 +86,23 @@
     function selectItem(item) {
       input.value = item.label;
       suggestionBox.hidden = true;
+      resultBox.textContent = 'Memuat data ongkir...';
+
       const url = `https://script.google.com/macros/s/AKfycby3xAhYR-NrT9NR6N56O1ZUIUhLb4V1ufxemPSZ15n2EquTDrhdXnekYXhI5UG7ZhqoVw/exec?provinsi=${encodeURIComponent(item.provinsi)}&index=${item.index}`;
-      window.open(url, '_blank');
+
+      fetch(url)
+        .then(res => res.json())
+        .then(json => {
+          let output = '';
+          for (const [key, value] of Object.entries(json)) {
+            output += `📌 ${key}: ${value}\n`;
+          }
+          resultBox.textContent = output;
+        })
+        .catch(err => {
+          resultBox.textContent = 'Gagal mengambil data ongkir.';
+          console.error(err);
+        });
     }
   </script>
 </body>
