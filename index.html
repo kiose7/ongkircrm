@@ -22,7 +22,7 @@
       padding: 10px;
       cursor: pointer;
     }
-    ul.suggestions li:hover {
+    ul.suggestions li:hover, ul.suggestions li.active {
       background: #f0f0f0;
     }
     #resultBox {
@@ -116,7 +116,7 @@
 
     function updateHighlight(items) {
       items.forEach((item, i) => {
-        item.style.background = i === selectedIndex ? '#f0f0f0' : '#fff';
+        item.classList.toggle('active', i === selectedIndex);
       });
     }
 
