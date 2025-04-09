@@ -2,10 +2,21 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CourierMLG</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    input[type="text"] { width: 100%; padding: 10px; font-size: 16px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
     ul.suggestions {
       list-style: none;
       margin: 0;
@@ -14,7 +25,7 @@
       max-height: 200px;
       overflow-y: auto;
       position: absolute;
-      width: 100%;
+      width: calc(100% - 40px);
       background: #fff;
       z-index: 10;
     }
@@ -36,9 +47,27 @@
       justify-content: space-between;
       padding: 8px 0;
       border-bottom: 1px solid #eee;
+      flex-wrap: wrap;
     }
-    .result-key { font-weight: bold; color: #333; }
-    .result-value { text-align: right; color: #222; }
+    .result-key {
+      font-weight: bold;
+      color: #333;
+      flex: 1 1 50%;
+    }
+    .result-value {
+      text-align: right;
+      color: #222;
+      flex: 1 1 50%;
+    }
+    @media (max-width: 600px) {
+      .result-key, .result-value {
+        flex: 1 1 100%;
+        text-align: left;
+      }
+      .result-value {
+        text-align: right;
+      }
+    }
   </style>
 </head>
 <body>
