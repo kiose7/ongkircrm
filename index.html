@@ -67,6 +67,7 @@
     const suggestionBox = document.getElementById('suggestions');
     const resultBox = document.getElementById('resultBox');
     let data = [];
+    let selectedIndex = -1;
 
     fetch('https://raw.githubusercontent.com/kiose7/ongkircrm/main/autodata.lst')
       .then(res => res.text())
@@ -92,7 +93,32 @@
       const val = input.value.toLowerCase();
       const filtered = data.filter(d => d.label.toLowerCase().includes(val));
       renderSuggestions(filtered);
+      selectedIndex = -1;
     });
+
+    input.addEventListener('keydown', (e) => {
+      const items = suggestionBox.querySelectorAll('li');
+      if (e.key === 'ArrowDown') {
+        selectedIndex = (selectedIndex + 1) % items.length;
+        updateHighlight(items);
+        e.preventDefault();
+      } else if (e.key === 'ArrowUp') {
+        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+        updateHighlight(items);
+        e.preventDefault();
+      } else if (e.key === 'Enter') {
+        if (selectedIndex >= 0 && items[selectedIndex]) {
+          items[selectedIndex].click();
+          e.preventDefault();
+        }
+      }
+    });
+
+    function updateHighlight(items) {
+      items.forEach((item, i) => {
+        item.style.background = i === selectedIndex ? '#f0f0f0' : '#fff';
+      });
+    }
 
     function renderSuggestions(list) {
       suggestionBox.innerHTML = '';
