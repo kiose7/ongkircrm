@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Cek Ongkir</title>
+  <title>CourierMLG</title>
   <style>
     body { font-family: Arial; padding: 20px; }
     input[type="text"] { width: 100%; padding: 10px; font-size: 16px; }
@@ -30,12 +30,25 @@
       padding: 15px;
       border: 1px solid #ddd;
       background: #f9f9f9;
-      white-space: pre-wrap;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .result-key {
+      font-weight: bold;
+      color: #333;
+    }
+    .result-value {
+      color: #555;
+      text-align: right;
     }
   </style>
 </head>
 <body>
-  <h2>Cek Ongkir Tujuan</h2>
+  <h2>Tujuan</h2>
   <input type="text" id="tujuanInput" placeholder="Ketik tujuan (provinsi, kabupaten, kecamatan)...">
   <ul class="suggestions" id="suggestions" hidden></ul>
   <div id="resultBox"></div>
@@ -86,21 +99,33 @@
     function selectItem(item) {
       input.value = item.label;
       suggestionBox.hidden = true;
-      resultBox.textContent = 'Memuat data ongkir...';
+      resultBox.innerHTML = '<em>Memuat data ongkir...</em>';
 
       const url = `https://script.google.com/macros/s/AKfycby3xAhYR-NrT9NR6N56O1ZUIUhLb4V1ufxemPSZ15n2EquTDrhdXnekYXhI5UG7ZhqoVw/exec?provinsi=${encodeURIComponent(item.provinsi)}&index=${item.index}`;
 
       fetch(url)
         .then(res => res.json())
         .then(json => {
-          let output = '';
+          resultBox.innerHTML = '';
           for (const [key, value] of Object.entries(json)) {
-            output += `📌 ${key}: ${value}\n`;
+            const row = document.createElement('div');
+            row.className = 'result-row';
+
+            const keyDiv = document.createElement('div');
+            keyDiv.className = 'result-key';
+            keyDiv.textContent = key;
+
+            const valueDiv = document.createElement('div');
+            valueDiv.className = 'result-value';
+            valueDiv.textContent = value;
+
+            row.appendChild(keyDiv);
+            row.appendChild(valueDiv);
+            resultBox.appendChild(row);
           }
-          resultBox.textContent = output;
         })
         .catch(err => {
-          resultBox.textContent = 'Gagal mengambil data ongkir.';
+          resultBox.innerHTML = '<span style="color: red">Gagal mengambil data ongkir.</span>';
           console.error(err);
         });
     }
