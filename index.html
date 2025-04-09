@@ -130,8 +130,8 @@
       fetch(url)
         .then(res => res.json())
         .then(json => {
-          const keys = json.header;
-          const values = json.data;
+          const keys = json.header.slice(2); // buang ADM dan KEC
+          const values = json.data.slice(2);
           let html = '';
           for (let i = 0; i < keys.length; i++) {
             html += `<div class="result-row"><div class="result-key">${keys[i]}</div><div class="result-value">${values[i]}</div></div>`;
