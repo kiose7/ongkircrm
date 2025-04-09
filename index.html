@@ -72,7 +72,7 @@
 </head>
 <body>
   <h2>Tujuan</h2>
-  <input type="text" id="tujuanInput" placeholder="Ketik tujuan (provinsi, kabupaten, kecamatan)...">
+  <input type="text" id="tujuanInput" placeholder="Ketik tujuan (kecamatan, kabupaten, provinsi)...">
   <ul class="suggestions" id="suggestions" hidden></ul>
   <div id="resultBox"></div>
 
@@ -96,7 +96,7 @@
             const kabupaten = parts[2];
             const kecamatan = parts.slice(3).join(',');
             return {
-              label: `${provinsi} - ${kabupaten} - ${kecamatan}`,
+              label: `${kecamatan}, ${kabupaten}, ${provinsi}`,
               provinsi,
               index
             };
